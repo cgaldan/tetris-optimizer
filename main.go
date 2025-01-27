@@ -26,4 +26,7 @@ func main() {
 		}
 		fmt.Println()
 	}
+
+	grid := tetro.FindSmallestGrid(tetrominoes)
+	tetro.PrintGrid(grid)
 }
