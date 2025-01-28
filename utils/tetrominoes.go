@@ -121,3 +121,53 @@ func tetrominoCheck(tetromino [4][4]rune) bool {
 
 	return count == 4
 }
+
+func trimTetromino(tetromino [4][4]rune) [4][4]rune {
+	var minRow, maxRow, minCol, maxCol int
+	minRow, minCol = 4, 4
+	maxRow, maxCol = -1, -1
+
+	// Find the bounding box of the tetromino
+	for i := 0; i < 4; i++ {
+		for j := 0; j < 4; j++ {
+			if tetromino[i][j] == '#' {
+				if i < minRow {
+					minRow = i
+				}
+				if i > maxRow {
+					maxRow = i
+				}
+				if j < minCol {
+					minCol = j
+				}
+				if j > maxCol {
+					maxCol = j
+				}
+			}
+		}
+	}
+
+	// Create a new trimmed tetromino
+	var trimmed [4][4]rune
+	for i := range trimmed {
+		for j := range trimmed[i] {
+			trimmed[i][j] = '.'
+		}
+	}
+
+	for i := minRow; i <= maxRow; i++ {
+		for j := minCol; j <= maxCol; j++ {
+			trimmed[i-minRow][j-minCol] = tetromino[i][j]
+		}
+	}
+
+	return trimmed
+}
+
+func PreprocessTetrominoes(tetrominoes [][4][4]rune) [][4][4]rune {
+	trimmedTetrominoes := make([][4][4]rune, len(tetrominoes))
+	for i, tetromino := range tetrominoes {
+		trimmedTetrominoes[i] = trimTetromino(tetromino)
+	}
+	return trimmedTetrominoes
+}
