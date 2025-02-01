@@ -2,17 +2,16 @@ package tetro
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 )
 
-func ReadTetrominoes(filename string) ([][4][4]rune, error) {
+func ReadTetrominoes(filename string) [][4][4]rune {
 	filename = "examples/" + filename
 
 	file, err := os.Open(filename)
 	if err != nil {
-		return nil, err
+		return nil
 	}
 	defer file.Close()
 
@@ -25,9 +24,9 @@ func ReadTetrominoes(filename string) ([][4][4]rune, error) {
 
 		if strings.TrimSpace(line) == "" {
 			if len(current) > 0 {
-				tetromino, err := formatCheck(current)
-				if err != nil {
-					return nil, err
+				tetromino := formatCheck(current)
+				if tetromino == [4][4]rune{} {
+					return nil
 				}
 
 				tetrominoes = append(tetrominoes, tetromino)
@@ -40,45 +39,45 @@ func ReadTetrominoes(filename string) ([][4][4]rune, error) {
 	}
 
 	if err := scanner.Err(); err != nil {
-		return nil, err
+		return nil
 	}
 
 	if len(current) > 0 {
-		tetromino, err := formatCheck(current)
-		if err != nil {
-			return nil, err
+		tetromino := formatCheck(current)
+		if tetromino == [4][4]rune{} {
+			return nil
 		}
 		tetrominoes = append(tetrominoes, tetromino)
 	}
 
-	return tetrominoes, nil
+	return tetrominoes
 }
 
-func formatCheck(lines []string) ([4][4]rune, error) {
+func formatCheck(lines []string) [4][4]rune {
 	var tetromino [4][4]rune
 
 	if len(lines) != 4 {
-		return tetromino, fmt.Errorf("tetromino must have 4 lines")
+		return [4][4]rune{}
 	}
 
 	for i, line := range lines {
 		if len(line) != 4 {
-			return tetromino, fmt.Errorf("line %d must have 4 characters", i+1)
+			return [4][4]rune{}
 		}
 
 		for j, char := range line {
 			if char != '.' && char != '#' {
-				return tetromino, fmt.Errorf("line %d character %d must be '.' or '#'", i+1, j+1)
+				return [4][4]rune{}
 			}
 			tetromino[i][j] = char
 		}
 	}
 
 	if !tetrominoCheck(tetromino) {
-		return tetromino, fmt.Errorf("ERROR: tetromino is not valid")
+		return [4][4]rune{}
 	}
 
-	return tetromino, nil
+	return tetromino
 }
 
 func tetrominoCheck(tetromino [4][4]rune) bool {

@@ -38,7 +38,7 @@ func canPlace(grid [][]rune, tetromino [4][4]rune, x, y int) bool {
 func placeTetromino(grid [][]rune, tetromino [4][4]rune, x, y int, letter rune) {
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
-			if tetromino[i][j] == '#' {
+			if tetromino[i][j] != '.' {
 				grid[x+i][y+j] = letter
 			}
 		}
@@ -48,7 +48,7 @@ func placeTetromino(grid [][]rune, tetromino [4][4]rune, x, y int, letter rune) 
 func removeTetromino(grid [][]rune, tetromino [4][4]rune, x, y int) {
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
-			if tetromino[i][j] == '#' {
+			if tetromino[i][j] != '.' {
 				grid[x+i][y+j] = '.'
 			}
 		}

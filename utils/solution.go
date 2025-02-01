@@ -49,21 +49,3 @@ func minGridSize(tetrominoes [][4][4]rune) int {
 
 	return size
 }
-
-// func FindOptimalGrid(tetrominoes [][4][4]rune) int {
-// 	minSize := int(math.Ceil(math.Sqrt(float64(len(tetrominoes) * 4))))
-// 	maxSize := minSize * 2
-
-// 	for minSize <= maxSize {
-// 		midSize := (minSize + maxSize) / 2
-// 		grid := CreateGrid(midSize)
-
-// 		if Solution(grid, tetrominoes, 0) {
-// 			minSize = midSize
-// 		} else {
-// 			maxSize = midSize + 1
-// 		}
-// 	}
-
-// 	return minSize
-// }
