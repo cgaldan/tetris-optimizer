@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+// ReadTetrominoes reads a file containing tetromino shapes and returns a slice of 4x4 rune arrays.
 func ReadTetrominoes(filename string) [][4][4]rune {
 	filename = "examples/" + filename
 
@@ -23,12 +24,12 @@ func ReadTetrominoes(filename string) [][4][4]rune {
 		line := scanner.Text()
 
 		if strings.TrimSpace(line) == "" {
+			// Process the collected lines when an empty line is encountered
 			if len(current) > 0 {
 				tetromino := formatCheck(current)
 				if tetromino == [4][4]rune{} {
-					return nil
+					return nil // Invalid tetromino format
 				}
-
 				tetrominoes = append(tetrominoes, tetromino)
 				current = nil
 			}
@@ -42,6 +43,7 @@ func ReadTetrominoes(filename string) [][4][4]rune {
 		return nil
 	}
 
+	// Process the last tetromino if the file doesn't end with an empty line
 	if len(current) > 0 {
 		tetromino := formatCheck(current)
 		if tetromino == [4][4]rune{} {
@@ -53,37 +55,40 @@ func ReadTetrominoes(filename string) [][4][4]rune {
 	return tetrominoes
 }
 
+// formatCheck validates and converts a slice of strings into a 4x4 rune array.
 func formatCheck(lines []string) [4][4]rune {
 	var tetromino [4][4]rune
 
 	if len(lines) != 4 {
-		return [4][4]rune{}
+		return [4][4]rune{} // Ensure tetromino has exactly 4 rows
 	}
 
 	for i, line := range lines {
 		if len(line) != 4 {
-			return [4][4]rune{}
+			return [4][4]rune{} // Ensure each row has exactly 4 columns
 		}
 
 		for j, char := range line {
 			if char != '.' && char != '#' {
-				return [4][4]rune{}
+				return [4][4]rune{} // Only '.' and '#' are allowed
 			}
 			tetromino[i][j] = char
 		}
 	}
 
 	if !tetrominoCheck(tetromino) {
-		return [4][4]rune{}
+		return [4][4]rune{} // Ensure the tetromino is valid and connected
 	}
 
 	return tetromino
 }
 
+// tetrominoCheck verifies that the tetromino consists of exactly 4 connected '#' blocks.
 func tetrominoCheck(tetromino [4][4]rune) bool {
 	visited := [4][4]bool{}
 	var blocks [][2]int
 
+	// Collect all '#' block positions
 	for i := 0; i < 4; i++ {
 		for j := 0; j < 4; j++ {
 			if tetromino[i][j] == '#' {
@@ -93,7 +98,7 @@ func tetrominoCheck(tetromino [4][4]rune) bool {
 	}
 
 	if len(blocks) != 4 {
-		return false
+		return false // Tetromino must have exactly 4 blocks
 	}
 
 	var queue [][2]int
@@ -101,8 +106,9 @@ func tetrominoCheck(tetromino [4][4]rune) bool {
 	visited[blocks[0][0]][blocks[0][1]] = true
 
 	count := 0
-	directions := [][2]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}}
+	directions := [][2]int{{0, 1}, {0, -1}, {1, 0}, {-1, 0}} // Right, Left, Down, Up
 
+	// BFS to check if all 4 '#' are connected
 	for len(queue) > 0 {
 		current := queue[0]
 		queue = queue[1:]
@@ -118,9 +124,10 @@ func tetrominoCheck(tetromino [4][4]rune) bool {
 		}
 	}
 
-	return count == 4
+	return count == 4 // Valid if all 4 blocks are connected
 }
 
+// trimTetromino removes empty spaces "." around the tetromino.
 func trimTetromino(tetromino [4][4]rune) [4][4]rune {
 	var minRow, maxRow, minCol, maxCol int
 	minRow, minCol = 4, 4
@@ -154,6 +161,7 @@ func trimTetromino(tetromino [4][4]rune) [4][4]rune {
 		}
 	}
 
+	// Copy only the relevant part
 	for i := minRow; i <= maxRow; i++ {
 		for j := minCol; j <= maxCol; j++ {
 			trimmed[i-minRow][j-minCol] = tetromino[i][j]
@@ -163,6 +171,7 @@ func trimTetromino(tetromino [4][4]rune) [4][4]rune {
 	return trimmed
 }
 
+// PreprocessTetrominoes trims all tetrominoes to their bounding box.
 func PreprocessTetrominoes(tetrominoes [][4][4]rune) [][4][4]rune {
 	trimmedTetrominoes := make([][4][4]rune, len(tetrominoes))
 	for i, tetromino := range tetrominoes {
